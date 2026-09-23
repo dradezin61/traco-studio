@@ -449,12 +449,14 @@ body {
   }
 
   .fluxo-principal:hover,
-  .fluxo-principal:focus {
+  .fluxo-principal:focus,
+  .fluxo-principal.fluxo-pressionado {
     background-color: #506a59;
   }
 
   .fluxo-secundaria:hover,
-  .fluxo-secundaria:focus {
+  .fluxo-secundaria:focus,
+  .fluxo-secundaria.fluxo-pressionado {
     background-color: var(--brand);
     color: var(--surface);
   }
