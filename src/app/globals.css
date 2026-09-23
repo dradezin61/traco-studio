@@ -1,21 +1,23 @@
 @import "tailwindcss";
 
 :root {
-  /* Pedra clara, marfim e areia: três níveis de superfície, distinguíveis sem borda. */
-  --background: #eee8de;
-  --surface: #f8f5ef;
-  --surface-muted: #e0d6c6;
+  /* Off-white de papel: três níveis de superfície, distinguíveis sem borda.
+     O fundo é o mais quente, a superfície é quase branca e o tom intermediário
+     segura as fotografias enquanto elas carregam. */
+  --background: #f7f6f2;
+  --surface: #fffefb;
+  --surface-muted: #eeebe5;
   --foreground: #252b27;
   --muted: #555c55;
-  --border: #d5cabb;
+  --border: #dcd8cf;
   --brand: #34483f;
   --brand-strong: #26352e;
-  --brand-soft: #dde4df;
+  --brand-soft: #e2e8e4;
   --accent: #885b45;
   --danger: #8f3327;
-  --danger-soft: #f3e2de;
+  --danger-soft: #f6e7e3;
   --success: #2f5f47;
-  --success-soft: #dfeae2;
+  --success-soft: #e3eee7;
 }
 
 @theme inline {
@@ -44,7 +46,9 @@ body {
 
 /* --- Luz de esquadria na abertura ---------------------------------------
    Faixas diagonais e uma travessa, como o sol atravessando uma janela e
-   batendo na parede. Camada decorativa: entra uma vez e para. */
+   batendo na parede. Camada decorativa: entra uma vez e para. Sobre o fundo
+   off-white as sombras ficam mais evidentes, então são mais fracas do que
+   pareceriam necessárias no papel. */
 
 .luz-janela {
   position: absolute;
@@ -61,9 +65,9 @@ body {
   transform-origin: top center;
   background: linear-gradient(
     180deg,
-    rgba(136, 91, 69, 0.14) 0%,
-    rgba(37, 43, 39, 0.1) 45%,
-    rgba(37, 43, 39, 0.02) 100%
+    rgba(136, 91, 69, 0.095) 0%,
+    rgba(37, 43, 39, 0.07) 45%,
+    rgba(37, 43, 39, 0.015) 100%
   );
   filter: blur(0.5px);
   border-radius: 3px;
@@ -76,7 +80,7 @@ body {
   position: absolute;
   height: 26px;
   transform: rotate(-24deg);
-  background: linear-gradient(90deg, rgba(37, 43, 39, 0.02), rgba(37, 43, 39, 0.09), rgba(37, 43, 39, 0.02));
+  background: linear-gradient(90deg, rgba(37, 43, 39, 0.015), rgba(37, 43, 39, 0.065), rgba(37, 43, 39, 0.015));
   filter: blur(0.5px);
   mask-image: linear-gradient(90deg, transparent 0%, #000 25%, #000 100%);
   animation: luz-entra 3.4s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
@@ -94,7 +98,8 @@ body {
 }
 
 /* Aparição curta ao entrar na tela, uma única vez. Sem JavaScript, o conteúdo
-   já está visível: a classe só é aplicada pelo observador. */
+   já está visível: a classe só é aplicada pelo observador. Em listas, cada
+   item recebe um atraso pequeno, para a fila entrar em cascata e não em bloco. */
 .entra {
   opacity: 0;
   transform: translateY(14px);
@@ -104,12 +109,13 @@ body {
   opacity: 1;
   transform: none;
   transition:
-    opacity 520ms ease-out,
-    transform 520ms cubic-bezier(0.22, 0.61, 0.36, 1);
+    opacity 480ms ease-out,
+    transform 480ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  transition-delay: var(--atraso, 0ms);
 }
 
-/* Troca de etapa do orçamento e abertura da fotografia ampliada: curtas, só
-   para dar continuidade ao movimento. Não remontam nada. */
+/* Troca de etapa do orçamento, troca de filtro na galeria e abertura da
+   fotografia ampliada: curtas, só para dar continuidade ao movimento. */
 .etapa-troca {
   animation: etapa-entra 220ms ease-out;
 }
@@ -140,6 +146,24 @@ body {
   }
 }
 
+/* Enquanto a fotografia ampliada carrega, uma faixa clara percorre o vazio. */
+.carregando-foto::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.07), transparent);
+  animation: varredura 1.1s linear infinite;
+}
+
+@keyframes varredura {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -159,5 +183,9 @@ body {
   .entra {
     opacity: 1;
     transform: none;
+  }
+
+  .carregando-foto::after {
+    animation: none;
   }
 }

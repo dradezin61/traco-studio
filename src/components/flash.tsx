@@ -9,7 +9,7 @@ export function Flash({ ok, erro }: { ok?: string; erro?: string }) {
   return (
     <div
       role={error ? "alert" : "status"}
-      className={`rounded-lg border px-4 py-3 text-sm font-medium ${
+      className={`etapa-troca rounded-lg border px-4 py-3 text-sm font-medium ${
         error ? "border-danger/30 bg-danger-soft text-danger" : "border-success/30 bg-success-soft text-success"
       }`}
     >

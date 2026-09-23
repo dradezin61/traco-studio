@@ -1,13 +1,24 @@
 "use client";
 
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef, type CSSProperties, type ReactNode } from "react";
 
 /**
  * Aparição curta quando o elemento entra na tela, uma única vez.
  * O estado inicial é aplicado pelo próprio script: sem JavaScript, ou com
  * movimento reduzido, o conteúdo aparece normalmente desde o começo.
+ *
+ * Em listas, `atraso` escalona a entrada dos cartões — o suficiente para a
+ * fila ser percebida como sequência, sem fazer ninguém esperar pelo último.
  */
-export function Reveal({ children, className = "" }: { children: ReactNode; className?: string }) {
+export function Reveal({
+  children,
+  className = "",
+  atraso = 0,
+}: {
+  children: ReactNode;
+  className?: string;
+  atraso?: number;
+}) {
   const alvo = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -29,7 +40,7 @@ export function Reveal({ children, className = "" }: { children: ReactNode; clas
   }, []);
 
   return (
-    <div ref={alvo} className={className}>
+    <div ref={alvo} className={className} style={atraso ? { "--atraso": `${atraso}ms` } as CSSProperties : undefined}>
       {children}
     </div>
   );

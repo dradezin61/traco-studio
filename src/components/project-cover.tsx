@@ -38,6 +38,7 @@ export function ProjectCover({ path, alt, title, sizes, ratio = "4/5", priority 
         alt={alt ?? title}
         fill
         sizes={sizes}
+        quality={85}
         priority={priority}
         className="object-cover transition-transform duration-500 ease-out will-change-transform group-hover:scale-[1.025] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
       />

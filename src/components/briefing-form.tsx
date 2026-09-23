@@ -258,7 +258,7 @@ export function BriefingForm() {
               {anexos.length > 0 ? (
                 <ul className="mt-4 grid gap-2">
                   {anexos.map((anexo) => (
-                    <li key={anexo.id} className="rounded-[10px] border border-border bg-surface px-3 py-2.5 text-sm">
+                    <li key={anexo.id} className="etapa-troca rounded-[10px] border border-border bg-surface px-3 py-2.5 text-sm">
                       <div className="flex items-center justify-between gap-3">
                         <span className="truncate">{anexo.nome}</span>
                         <span className="shrink-0 text-xs text-muted tabular-nums">{tamanhoLegivel(anexo.tamanho)}</span>
@@ -287,7 +287,11 @@ export function BriefingForm() {
                         </div>
                       ) : null}
 
-                      {anexo.estado === "pronto" ? <p className="mt-1 text-xs text-success">Enviada.</p> : null}
+                      {anexo.estado === "pronto" ? (
+                        <p role="status" className="mt-1 text-xs text-success">
+                          Enviada.
+                        </p>
+                      ) : null}
                       {anexo.estado === "erro" ? <p className="mt-1 text-xs text-danger">{anexo.erro}</p> : null}
                     </li>
                   ))}

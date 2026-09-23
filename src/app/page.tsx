@@ -73,7 +73,7 @@ export default async function HomePage() {
           <ul className="mt-8 grid gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
             {destaques.map((projeto, indice) => (
               <li key={projeto.id}>
-                <Reveal>
+                <Reveal atraso={indice * 70}>
                   <Link
                     href={`/projetos/${projeto.slug}`}
                     className="group block rounded-[10px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand"

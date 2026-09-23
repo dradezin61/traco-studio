@@ -36,7 +36,7 @@ export function HeroLight() {
       {/* Clareia o canto superior direito, dando direção à luz. */}
       <span
         className="absolute -right-24 -top-32 size-[28rem] rounded-full opacity-70"
-        style={{ background: "radial-gradient(closest-side, rgba(248,245,239,0.9), transparent)" }}
+        style={{ background: "radial-gradient(closest-side, rgba(255,254,251,0.92), transparent)" }}
       />
     </div>
   );
