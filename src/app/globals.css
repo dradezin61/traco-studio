@@ -44,56 +44,99 @@ body {
   color: var(--foreground);
 }
 
-/* --- Luz de esquadria na abertura ---------------------------------------
-   Faixas diagonais e uma travessa, como o sol atravessando uma janela e
-   batendo na parede. Camada decorativa: entra uma vez e para. Sobre o fundo
-   off-white as sombras ficam mais evidentes, então são mais fracas do que
-   pareceriam necessárias no papel. */
+/* --- Malha de desenho na abertura ---------------------------------------
+   Duas famílias de linhas diagonais que deslizam sem parar. O ciclo avança
+   um módulo real do padrão (o passo vezes raiz de dois, porque as linhas
+   estão a 45 graus), então a repetição não tem emenda visível. A camada
+   decorativa é mascarada pelo container, que não se move: o desenho ganha
+   presença à direita e se apaga onde o texto começa — sem tapar a malha com
+   uma chapa branca. */
 
-.luz-janela {
+.malha {
   position: absolute;
   inset: 0;
   overflow: hidden;
   pointer-events: none;
+
+  --malha-passo: 56px;
+  --malha-ciclo: 7s;
+  --malha-linha: rgba(52, 72, 63, 0.22);
+  --malha-linha-secundaria: rgba(52, 72, 63, 0.14);
+  --malha-traco: rgba(136, 91, 69, 0.28);
+
+  mask-image:
+    linear-gradient(100deg, transparent 14%, rgba(0, 0, 0, 0.34) 40%, #000 66%),
+    linear-gradient(to bottom, #000 0%, #000 66%, transparent 97%);
+  mask-composite: intersect;
+  -webkit-mask-image:
+    linear-gradient(100deg, transparent 14%, rgba(0, 0, 0, 0.34) 40%, #000 66%),
+    linear-gradient(to bottom, #000 0%, #000 66%, transparent 97%);
+  -webkit-mask-composite: source-in;
 }
 
-.luz-faixa {
+.malha-camada {
   position: absolute;
-  top: -30%;
-  height: 170%;
-  transform: rotate(-24deg);
-  transform-origin: top center;
-  background: linear-gradient(
-    180deg,
-    rgba(136, 91, 69, 0.095) 0%,
-    rgba(37, 43, 39, 0.07) 45%,
-    rgba(37, 43, 39, 0.015) 100%
+  animation-play-state: running;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+
+/* Malha principal: linhas de 1 px nas duas diagonais. */
+.malha-camada-fina {
+  inset: calc(var(--malha-passo) * -3);
+  background-image:
+    repeating-linear-gradient(45deg, var(--malha-linha) 0 1px, transparent 1px var(--malha-passo)),
+    repeating-linear-gradient(-45deg, var(--malha-linha-secundaria) 0 1px, transparent 1px var(--malha-passo));
+  animation-name: malha-desliza;
+  animation-duration: var(--malha-ciclo);
+}
+
+/* Poucos traços de terracota, num módulo cinco vezes maior. Anda na mesma
+   velocidade da malha — cinco módulos em cinco ciclos — e por isso também
+   emenda sem salto. */
+.malha-camada-traco {
+  inset: calc(var(--malha-passo) * -10);
+  background-image: repeating-linear-gradient(
+    45deg,
+    var(--malha-traco) 0 1px,
+    transparent 1px calc(var(--malha-passo) * 5)
   );
-  filter: blur(0.5px);
-  border-radius: 3px;
-  /* A leitura fica à esquerda: a luz se apaga antes de alcançar o texto. */
-  mask-image: linear-gradient(90deg, transparent 0%, #000 22%, #000 100%);
-  animation: luz-entra 3.4s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+  animation-name: malha-desliza-traco;
+  animation-duration: calc(var(--malha-ciclo) * 5);
 }
 
-.luz-travessa {
-  position: absolute;
-  height: 26px;
-  transform: rotate(-24deg);
-  background: linear-gradient(90deg, rgba(37, 43, 39, 0.015), rgba(37, 43, 39, 0.065), rgba(37, 43, 39, 0.015));
-  filter: blur(0.5px);
-  mask-image: linear-gradient(90deg, transparent 0%, #000 25%, #000 100%);
-  animation: luz-entra 3.4s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+.malha[data-parado="sim"] .malha-camada {
+  animation-play-state: paused;
 }
 
-@keyframes luz-entra {
+@keyframes malha-desliza {
   from {
-    opacity: 0;
-    transform: rotate(-24deg) translate3d(-48px, -24px, 0);
+    transform: translate3d(0, 0, 0);
   }
   to {
-    opacity: 1;
-    transform: rotate(-24deg) translate3d(0, 0, 0);
+    transform: translate3d(calc(var(--malha-passo) * -1.41421356), 0, 0);
+  }
+}
+
+@keyframes malha-desliza-traco {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(calc(var(--malha-passo) * -7.07106781), 0, 0);
+  }
+}
+
+/* No celular o desenho rareia e se concentra no alto, ao lado do texto. */
+@media (max-width: 639px) {
+  .malha {
+    --malha-passo: 72px;
+    --malha-linha: rgba(52, 72, 63, 0.24);
+    --malha-linha-secundaria: rgba(52, 72, 63, 0.14);
+
+    mask-image: radial-gradient(135% 58% at 96% 0%, #000 0%, rgba(0, 0, 0, 0.62) 46%, transparent 84%);
+    -webkit-mask-image: radial-gradient(135% 58% at 96% 0%, #000 0%, rgba(0, 0, 0, 0.62) 46%, transparent 84%);
   }
 }
 
@@ -164,6 +207,202 @@ body {
   }
 }
 
+/* --- Chamada com preenchimento circular ----------------------------------
+   Em repouso, texto e seta à direita. Ao apontar, focar pelo teclado ou tocar,
+   um círculo cresce do centro até cobrir o botão, a seta da direita sai, outra
+   entra pela esquerda e o texto se desloca para receber. A largura não muda em
+   nenhum momento: a seta que entra é posicionada por cima do respiro esquerdo
+   e a que sai mantém o lugar dela. */
+
+.fluxo {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.75rem 1.5rem;
+  overflow: hidden;
+  border: 1px solid transparent;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.25rem;
+  transition:
+    border-radius 520ms cubic-bezier(0.22, 0.61, 0.36, 1),
+    background-color 260ms ease-out,
+    border-color 260ms ease-out,
+    transform 140ms ease-out;
+}
+
+.fluxo:active {
+  transform: scale(0.985);
+}
+
+.fluxo:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+.fluxo:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.fluxo-principal {
+  background-color: var(--brand);
+  color: var(--surface);
+}
+
+.fluxo-secundaria {
+  background-color: var(--surface);
+  border-color: var(--border);
+  color: var(--brand);
+}
+
+.fluxo-circulo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 0;
+  width: 140%;
+  aspect-ratio: 1;
+  border-radius: 9999px;
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 560ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* Verde mais claro por dentro do verde profundo; no secundário, o verde
+   profundo invade a superfície clara. */
+.fluxo-principal .fluxo-circulo {
+  background-color: #506a59;
+}
+
+.fluxo-secundaria .fluxo-circulo {
+  background-color: var(--brand);
+}
+
+.fluxo-texto {
+  position: relative;
+  z-index: 1;
+  /* A troca de cor espera o círculo passar por baixo das letras. */
+  transition:
+    transform 520ms cubic-bezier(0.22, 0.61, 0.36, 1),
+    color 180ms ease-out 90ms;
+}
+
+.fluxo-seta {
+  position: relative;
+  z-index: 1;
+  width: 1rem;
+  height: 1rem;
+  flex: none;
+}
+
+.fluxo-seta-sai {
+  transition:
+    transform 520ms cubic-bezier(0.22, 0.61, 0.36, 1),
+    opacity 300ms ease-out;
+}
+
+.fluxo-seta-entra {
+  position: absolute;
+  left: 0.75rem;
+  opacity: 0;
+  transform: translateX(-10px);
+  transition:
+    transform 520ms cubic-bezier(0.22, 0.61, 0.36, 1),
+    opacity 320ms ease-out 100ms;
+}
+
+/* O mesmo estado para ponteiro, teclado e toque. O hover fica restrito a quem
+   tem ponteiro, para não travar aceso no celular. */
+.fluxo:focus,
+.fluxo:active,
+.fluxo-pressionado {
+  border-radius: 13px;
+}
+
+.fluxo:focus .fluxo-circulo,
+.fluxo:active .fluxo-circulo,
+.fluxo-pressionado .fluxo-circulo {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.fluxo:focus .fluxo-texto,
+.fluxo:active .fluxo-texto,
+.fluxo-pressionado .fluxo-texto {
+  transform: translateX(8px);
+}
+
+.fluxo-secundaria:focus .fluxo-texto,
+.fluxo-secundaria:active .fluxo-texto,
+.fluxo-secundaria.fluxo-pressionado .fluxo-texto,
+.fluxo-secundaria:focus .fluxo-seta,
+.fluxo-secundaria:active .fluxo-seta,
+.fluxo-secundaria.fluxo-pressionado .fluxo-seta {
+  color: var(--surface);
+}
+
+.fluxo:focus .fluxo-seta-sai,
+.fluxo:active .fluxo-seta-sai,
+.fluxo-pressionado .fluxo-seta-sai {
+  opacity: 0;
+  transform: translateX(18px);
+}
+
+.fluxo:focus .fluxo-seta-entra,
+.fluxo:active .fluxo-seta-entra,
+.fluxo-pressionado .fluxo-seta-entra {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+@media (hover: hover) {
+  .fluxo:hover {
+    border-radius: 13px;
+  }
+
+  .fluxo:hover .fluxo-circulo {
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  .fluxo:hover .fluxo-texto {
+    transform: translateX(8px);
+  }
+
+  .fluxo-secundaria:hover .fluxo-texto,
+  .fluxo-secundaria:hover .fluxo-seta {
+    color: var(--surface);
+  }
+
+  .fluxo:hover .fluxo-seta-sai {
+    opacity: 0;
+    transform: translateX(18px);
+  }
+
+  .fluxo:hover .fluxo-seta-entra {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Desabilitado não se anima: o botão apenas espera. */
+.fluxo:disabled .fluxo-circulo {
+  transform: translate(-50%, -50%) scale(0);
+}
+
+.fluxo:disabled .fluxo-texto,
+.fluxo:disabled .fluxo-seta-sai {
+  transform: none;
+  opacity: 1;
+}
+
+.fluxo:disabled .fluxo-seta-entra {
+  opacity: 0;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -173,11 +412,16 @@ body {
     scroll-behavior: auto !important;
   }
 
-  /* Sem movimento: a composição fica montada, não some. */
-  .luz-faixa,
-  .luz-travessa {
-    opacity: 1;
-    transform: rotate(-24deg);
+  /* Sem movimento: o desenho fica montado e parado. Zerar a duração não
+     resolveria um laço infinito — a animação precisa ser desligada. */
+  .malha-camada {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  /* Nada se move: o controle de pausa perde a função. */
+  .malha-controle {
+    display: none;
   }
 
   .entra {
@@ -187,5 +431,31 @@ body {
 
   .carregando-foto::after {
     animation: none;
+  }
+
+  /* Sem expansão nem deslocamento: a chamada muda de cor e mantém o foco. */
+  .fluxo-circulo {
+    display: none;
+  }
+
+  .fluxo,
+  .fluxo-texto,
+  .fluxo-seta-sai {
+    transform: none !important;
+  }
+
+  .fluxo-seta-entra {
+    display: none;
+  }
+
+  .fluxo-principal:hover,
+  .fluxo-principal:focus {
+    background-color: #506a59;
+  }
+
+  .fluxo-secundaria:hover,
+  .fluxo-secundaria:focus {
+    background-color: var(--brand);
+    color: var(--surface);
   }
 }

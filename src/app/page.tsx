@@ -1,9 +1,10 @@
 import Link from "next/link";
 
-import { HeroLight } from "@/components/hero-light";
+import { FlowLink } from "@/components/flow-button";
+import { MotionGrid } from "@/components/motion-grid";
 import { ProjectCover } from "@/components/project-cover";
 import { Reveal } from "@/components/reveal";
-import { btnPrimary, btnSecondary, eyebrow } from "@/components/ui";
+import { eyebrow } from "@/components/ui";
 import { studio } from "@/lib/studio";
 import { createClient } from "@/lib/supabase/server";
 
@@ -33,7 +34,7 @@ export default async function HomePage() {
   return (
     <main className="flex-1">
       <section className="relative isolate overflow-hidden">
-        <HeroLight />
+        <MotionGrid />
 
         <div className="relative mx-auto w-full max-w-6xl px-5 pb-20 pt-14 sm:px-8 sm:pb-28 sm:pt-24">
           <p className={eyebrow}>
@@ -46,12 +47,10 @@ export default async function HomePage() {
             Projetos residenciais, comerciais e de interiores conduzidos do primeiro desenho à obra entregue.
           </p>
           <div className="mt-10 flex flex-wrap gap-3">
-            <Link href="/orcamento" className={btnPrimary}>
-              Pedir orçamento
-            </Link>
-            <Link href="/projetos" className={btnSecondary}>
+            <FlowLink href="/orcamento">Pedir orçamento</FlowLink>
+            <FlowLink href="/projetos" variante="secundaria">
               Ver projetos
-            </Link>
+            </FlowLink>
           </div>
         </div>
       </section>

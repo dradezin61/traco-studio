@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 
-import { btnPrimary, eyebrow } from "@/components/ui";
+import { FlowLink } from "@/components/flow-button";
+import { eyebrow } from "@/components/ui";
 import { studio } from "@/lib/studio";
 
 export const metadata: Metadata = { title: "Estúdio" };
@@ -45,9 +45,9 @@ export default function StudioPage() {
             <p className="mt-2">{studio.city}</p>
           </div>
 
-          <Link href="/orcamento" className={`${btnPrimary} w-full`}>
+          <FlowLink href="/orcamento" className="w-full">
             Pedir orçamento
-          </Link>
+          </FlowLink>
         </aside>
       </div>
 

@@ -3,7 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { ProjectGallery, type GalleryImage } from "@/components/project-gallery";
-import { btnPrimary, eyebrow } from "@/components/ui";
+import { FlowLink } from "@/components/flow-button";
+import { eyebrow } from "@/components/ui";
 import { publicImageUrl } from "@/lib/images";
 import { createClient } from "@/lib/supabase/server";
 
@@ -104,9 +105,9 @@ export default async function ProjectPage({ params }: PageProps<"/projetos/[slug
             ))}
           </dl>
           <p className="mt-6 whitespace-pre-line leading-relaxed">{projeto.description}</p>
-          <Link href="/orcamento" className={`${btnPrimary} mt-7 w-full`}>
+          <FlowLink href="/orcamento" className="mt-7 w-full">
             Quero um projeto assim
-          </Link>
+          </FlowLink>
         </aside>
       </div>
 

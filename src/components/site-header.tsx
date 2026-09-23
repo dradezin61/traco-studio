@@ -3,7 +3,8 @@ import Link from "next/link";
 import { signOut } from "@/app/auth-actions";
 import { NavLink } from "@/components/nav-link";
 import { SubmitButton } from "@/components/submit-button";
-import { btnPrimary, btnSecondary } from "@/components/ui";
+import { FlowLink } from "@/components/flow-button";
+import { btnSecondary } from "@/components/ui";
 import { getViewer } from "@/lib/auth";
 import { studio } from "@/lib/studio";
 
@@ -36,9 +37,7 @@ export async function SiteHeader() {
         </nav>
 
         <div className="order-2 flex items-center gap-2 sm:order-3">
-          <Link href="/orcamento" className={btnPrimary}>
-            Pedir orçamento
-          </Link>
+          <FlowLink href="/orcamento">Pedir orçamento</FlowLink>
           {viewer ? (
             <form action={signOut}>
               <SubmitButton className={btnSecondary} pendingLabel="Saindo…">
