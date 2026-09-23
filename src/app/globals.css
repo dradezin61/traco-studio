@@ -1,20 +1,21 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f4f2ee;
-  --surface: #ffffff;
-  --surface-muted: #e9e5dd;
-  --foreground: #1a1c1a;
-  --muted: #6b6e69;
-  --border: #ded9d0;
-  --brand: #2e3330;
-  --brand-strong: #1f2321;
-  --brand-soft: #e6e9e5;
-  --accent: #a2603c;
-  --danger: #9c2f24;
-  --danger-soft: #f7e6e3;
-  --success: #2c6144;
-  --success-soft: #e4efe8;
+  /* Pedra clara, marfim e areia: três níveis de superfície, distinguíveis sem borda. */
+  --background: #eee8de;
+  --surface: #f8f5ef;
+  --surface-muted: #e0d6c6;
+  --foreground: #252b27;
+  --muted: #555c55;
+  --border: #d5cabb;
+  --brand: #34483f;
+  --brand-strong: #26352e;
+  --brand-soft: #dde4df;
+  --accent: #885b45;
+  --danger: #8f3327;
+  --danger-soft: #f3e2de;
+  --success: #2f5f47;
+  --success-soft: #dfeae2;
 }
 
 @theme inline {
@@ -33,12 +34,110 @@
   --color-success: var(--success);
   --color-success-soft: var(--success-soft);
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-instrument), ui-serif, Georgia, serif;
+  --font-display: var(--font-lora), ui-serif, Georgia, serif;
 }
 
 body {
   background-color: var(--background);
   color: var(--foreground);
+}
+
+/* --- Luz de esquadria na abertura ---------------------------------------
+   Faixas diagonais e uma travessa, como o sol atravessando uma janela e
+   batendo na parede. Camada decorativa: entra uma vez e para. */
+
+.luz-janela {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.luz-faixa {
+  position: absolute;
+  top: -30%;
+  height: 170%;
+  transform: rotate(-24deg);
+  transform-origin: top center;
+  background: linear-gradient(
+    180deg,
+    rgba(136, 91, 69, 0.14) 0%,
+    rgba(37, 43, 39, 0.1) 45%,
+    rgba(37, 43, 39, 0.02) 100%
+  );
+  filter: blur(0.5px);
+  border-radius: 3px;
+  /* A leitura fica à esquerda: a luz se apaga antes de alcançar o texto. */
+  mask-image: linear-gradient(90deg, transparent 0%, #000 22%, #000 100%);
+  animation: luz-entra 3.4s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+}
+
+.luz-travessa {
+  position: absolute;
+  height: 26px;
+  transform: rotate(-24deg);
+  background: linear-gradient(90deg, rgba(37, 43, 39, 0.02), rgba(37, 43, 39, 0.09), rgba(37, 43, 39, 0.02));
+  filter: blur(0.5px);
+  mask-image: linear-gradient(90deg, transparent 0%, #000 25%, #000 100%);
+  animation: luz-entra 3.4s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+}
+
+@keyframes luz-entra {
+  from {
+    opacity: 0;
+    transform: rotate(-24deg) translate3d(-48px, -24px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(-24deg) translate3d(0, 0, 0);
+  }
+}
+
+/* Aparição curta ao entrar na tela, uma única vez. Sem JavaScript, o conteúdo
+   já está visível: a classe só é aplicada pelo observador. */
+.entra {
+  opacity: 0;
+  transform: translateY(14px);
+}
+
+.entra-visivel {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 520ms ease-out,
+    transform 520ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* Troca de etapa do orçamento e abertura da fotografia ampliada: curtas, só
+   para dar continuidade ao movimento. Não remontam nada. */
+.etapa-troca {
+  animation: etapa-entra 220ms ease-out;
+}
+
+@keyframes etapa-entra {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.ampliada {
+  animation: ampliar 180ms ease-out;
+}
+
+@keyframes ampliar {
+  from {
+    opacity: 0;
+    transform: scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -47,5 +146,18 @@ body {
   *::after {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Sem movimento: a composição fica montada, não some. */
+  .luz-faixa,
+  .luz-travessa {
+    opacity: 1;
+    transform: rotate(-24deg);
+  }
+
+  .entra {
+    opacity: 1;
+    transform: none;
   }
 }

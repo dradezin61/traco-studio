@@ -10,7 +10,7 @@ export default function StudioPage() {
   return (
     <main className="mx-auto w-full max-w-4xl flex-1 px-5 py-12 sm:px-8">
       <p className={eyebrow}>O estúdio</p>
-      <h1 className="mt-4 font-display text-4xl tracking-tight sm:text-5xl">
+      <h1 className="mt-5 max-w-[18ch] font-display text-[2.5rem] font-medium leading-[1.1] tracking-[-0.01em] sm:text-6xl">
         Desenhar é decidir o que fica de fora.
       </h1>
 

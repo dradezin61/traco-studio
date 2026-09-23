@@ -12,7 +12,7 @@ export default async function BriefingPage({ searchParams }: PageProps<"/orcamen
   return (
     <main className="mx-auto w-full max-w-3xl flex-1 px-5 py-12 sm:px-8">
       <p className={eyebrow}>Orçamento</p>
-      <h1 className="mt-4 font-display text-4xl tracking-tight sm:text-5xl">Conte sobre o seu espaço.</h1>
+      <h1 className="mt-5 max-w-[18ch] font-display text-[2.5rem] font-medium leading-[1.1] tracking-[-0.01em] sm:text-6xl">Conte sobre o seu espaço.</h1>
       <p className="mt-4 max-w-xl text-lg leading-relaxed text-muted">
         Quatro passos rápidos. Respondemos em até dois dias úteis com uma primeira conversa e uma estimativa de prazo.
       </p>

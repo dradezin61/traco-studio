@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { ProjectCover } from "@/components/project-cover";
+import { Reveal } from "@/components/reveal";
 import { eyebrow } from "@/components/ui";
 import { categories } from "@/lib/studio";
 import { createClient } from "@/lib/supabase/server";
@@ -38,7 +39,7 @@ export default async function ProjectsPage({ searchParams }: PageProps<"/projeto
 
   return (
     <main className="mx-auto w-full max-w-6xl flex-1 px-5 py-12 sm:px-8">
-      <h1 className="font-display text-4xl tracking-tight sm:text-5xl">Projetos</h1>
+      <h1 className="font-display text-[2.5rem] font-medium leading-[1.1] tracking-[-0.01em] sm:text-6xl">Projetos</h1>
       <p className="mt-3 max-w-xl text-lg leading-relaxed text-muted">
         Residências, espaços comerciais e reformas de interiores.
       </p>
@@ -71,6 +72,7 @@ export default async function ProjectsPage({ searchParams }: PageProps<"/projeto
         <ul className="mt-10 grid gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
           {projetos.map((projeto, indice) => (
             <li key={projeto.id}>
+              <Reveal>
               <Link
                 href={`/projetos/${projeto.slug}`}
                 className="group block rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand"
@@ -81,14 +83,15 @@ export default async function ProjectsPage({ searchParams }: PageProps<"/projeto
                   title={projeto.title}
                   sizes="(min-width: 1024px) 360px, (min-width: 640px) 45vw, 92vw"
                   priority={indice < 3}
-                  className="rounded-lg transition-opacity group-hover:opacity-90"
+                  className="rounded-[10px]"
                 />
                 <p className={`${eyebrow} mt-4`}>
                   {projeto.category} · {projeto.year} · {projeto.location}
                 </p>
-                <h2 className="mt-2 font-display text-xl">{projeto.title}</h2>
-                <p className="mt-1.5 text-sm leading-relaxed text-muted">{projeto.summary}</p>
+                <h2 className="mt-2 font-display text-xl font-semibold transition-colors group-hover:text-accent">{projeto.title}</h2>
+                <p className="mt-2 text-[15px] leading-relaxed text-muted">{projeto.summary}</p>
               </Link>
+              </Reveal>
             </li>
           ))}
         </ul>

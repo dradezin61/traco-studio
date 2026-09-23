@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { signOut } from "@/app/auth-actions";
+import { NavLink } from "@/components/nav-link";
 import { SubmitButton } from "@/components/submit-button";
 import { btnPrimary, btnSecondary } from "@/components/ui";
 import { getViewer } from "@/lib/auth";
@@ -10,14 +11,16 @@ export async function SiteHeader() {
   const viewer = await getViewer();
 
   return (
-    <header className="border-b border-border/70">
+    <header className="border-b border-border bg-background/80 backdrop-blur-[2px]">
       <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-5 sm:px-8">
         <Link
           href="/"
-          className="rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand"
+          className="group rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand"
         >
-          <span className="font-display text-2xl leading-none tracking-tight">{studio.name}</span>
-          <span className="ml-2 text-xs font-semibold uppercase tracking-[0.24em] text-muted">{studio.suffix}</span>
+          <span className="font-display text-2xl font-semibold leading-none tracking-[-0.01em]">{studio.name}</span>
+          <span className="ml-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-muted transition-colors group-hover:text-foreground">
+            {studio.suffix}
+          </span>
         </Link>
 
         <nav aria-label="Principal" className="order-3 flex items-center gap-1 sm:order-2">
@@ -26,13 +29,9 @@ export async function SiteHeader() {
             { href: "/estudio", label: "Estúdio" },
             ...(viewer?.isAdmin ? [{ href: "/painel", label: "Painel" }] : []),
           ].map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="rounded-full px-3.5 py-2 text-sm text-muted transition-colors hover:bg-surface-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
-            >
+            <NavLink key={link.href} href={link.href}>
               {link.label}
-            </Link>
+            </NavLink>
           ))}
         </nav>
 

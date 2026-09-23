@@ -45,7 +45,7 @@ export function ProjectGallery({ images }: { images: GalleryImage[] }) {
             <button
               type="button"
               onClick={() => setAberta(indice)}
-              className="group relative block w-full overflow-hidden rounded-lg bg-surface-muted focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand"
+              className="group relative block w-full overflow-hidden rounded-[10px] bg-surface-muted focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand"
               aria-label={`Ampliar fotografia ${indice + 1} de ${total}: ${imagem.alt}`}
             >
               <div className={indice === 0 ? "aspect-3/2" : "aspect-4/5"}>
@@ -54,7 +54,7 @@ export function ProjectGallery({ images }: { images: GalleryImage[] }) {
                   alt={imagem.alt}
                   fill
                   sizes={indice === 0 ? "(min-width: 1024px) 900px, 92vw" : "(min-width: 640px) 45vw, 92vw"}
-                  className="object-cover transition-opacity group-hover:opacity-90"
+                  className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.025] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
                 />
               </div>
             </button>
@@ -67,7 +67,7 @@ export function ProjectGallery({ images }: { images: GalleryImage[] }) {
           role="dialog"
           aria-modal="true"
           aria-label={images[aberta].alt}
-          className="fixed inset-0 z-50 flex flex-col bg-foreground/95 p-4 sm:p-8"
+          className="ampliada fixed inset-0 z-50 flex flex-col bg-foreground/95 p-4 sm:p-8"
           onClick={() => setAberta(null)}
         >
           <div className="flex items-center justify-between text-sm text-white/80">

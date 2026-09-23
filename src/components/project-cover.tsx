@@ -15,7 +15,10 @@ type Props = {
 
 const ratios = { "4/5": "aspect-4/5", "3/2": "aspect-3/2", "16/9": "aspect-video" } as const;
 
-/** Fotografia do projeto, com o fundo pintado enquanto carrega. */
+/**
+ * Fotografia do projeto, com o fundo pintado enquanto carrega. A moldura mantém
+ * as dimensões: no hover, só a imagem cresce um pouco, dentro dela.
+ */
 export function ProjectCover({ path, alt, title, sizes, ratio = "4/5", priority = false, className = "" }: Props) {
   const url = publicImageUrl(path);
   const base = `relative w-full overflow-hidden bg-surface-muted ${ratios[ratio]} ${className}`;
@@ -30,7 +33,14 @@ export function ProjectCover({ path, alt, title, sizes, ratio = "4/5", priority 
 
   return (
     <div className={base}>
-      <Image src={url} alt={alt ?? title} fill sizes={sizes} priority={priority} className="object-cover" />
+      <Image
+        src={url}
+        alt={alt ?? title}
+        fill
+        sizes={sizes}
+        priority={priority}
+        className="object-cover transition-transform duration-500 ease-out will-change-transform group-hover:scale-[1.025] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+      />
     </div>
   );
 }

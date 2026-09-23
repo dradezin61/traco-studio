@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { prepareUpload, registerUpload, removeUpload, submitBriefing } from "@/app/briefing-actions";
 import { SubmitButton } from "@/components/submit-button";
@@ -52,6 +52,18 @@ export function BriefingForm() {
   const [email, setEmail] = useState("");
   const [anexos, setAnexos] = useState<Anexo[]>([]);
   const [aviso, setAviso] = useState<string | null>(null);
+  const painel = useRef<HTMLDivElement>(null);
+  const primeiraRenderizacao = useRef(true);
+
+  // Ao trocar de etapa, o foco vai para o começo dela — quem usa teclado ou
+  // leitor de tela não fica perdido no fim da página.
+  useEffect(() => {
+    if (primeiraRenderizacao.current) {
+      primeiraRenderizacao.current = false;
+      return;
+    }
+    painel.current?.focus();
+  }, [etapa]);
 
   const prontos = anexos.filter((a) => a.estado === "pronto");
   const enviando = anexos.some((a) => a.estado === "enviando");
@@ -121,28 +133,50 @@ export function BriefingForm() {
       <input type="hidden" name="name" value={nome} />
       <input type="hidden" name="email" value={email} />
 
-      <ol className="flex flex-wrap gap-x-6 gap-y-2 border-b border-border/70 pb-4">
-        {briefingSteps.map((titulo, indice) => (
-          <li
-            key={titulo}
-            aria-current={indice === etapa ? "step" : undefined}
-            className={`text-sm ${indice === etapa ? "font-medium text-foreground" : indice < etapa ? "text-muted" : "text-muted/60"}`}
-          >
-            <span className="tabular-nums">{indice + 1}.</span> {titulo}
-          </li>
-        ))}
+      <ol className="flex flex-wrap items-center gap-x-5 gap-y-3 border-b border-border pb-5">
+        {briefingSteps.map((titulo, indice) => {
+          const atual = indice === etapa;
+          const concluida = indice < etapa;
+          return (
+            <li key={titulo} aria-current={atual ? "step" : undefined} className="flex items-center gap-2">
+              <span
+                aria-hidden="true"
+                className={`grid size-7 place-items-center rounded-full border text-xs font-semibold tabular-nums transition-colors duration-[180ms] ${
+                  atual
+                    ? "border-accent bg-accent text-white"
+                    : concluida
+                      ? "border-brand bg-brand-soft text-brand"
+                      : "border-border bg-surface text-muted"
+                }`}
+              >
+                {concluida ? "✓" : indice + 1}
+              </span>
+              <span className={`text-sm ${atual ? "font-medium text-foreground" : concluida ? "text-muted" : "text-muted/70"}`}>
+                {titulo}
+              </span>
+            </li>
+          );
+        })}
       </ol>
 
-      <div className="mt-8 min-h-72">
+      <div
+        key={etapa}
+        ref={painel}
+        tabIndex={-1}
+        aria-label={`Etapa ${etapa + 1} de ${briefingSteps.length}: ${briefingSteps[etapa]}`}
+        className="etapa-troca mt-8 min-h-72 outline-none"
+      >
         {etapa === 0 ? (
           <fieldset>
-            <legend className="font-display text-2xl">Que ambiente você quer projetar?</legend>
+            <legend className="font-display text-2xl font-semibold">Que ambiente você quer projetar?</legend>
             <div className="mt-5 grid gap-2 sm:grid-cols-3">
               {environmentTypes.map((tipo) => (
                 <label
                   key={tipo}
-                  className={`cursor-pointer rounded-lg border px-4 py-3 text-sm transition-colors ${
-                    ambiente === tipo ? "border-brand bg-brand-soft" : "border-border hover:border-foreground/30"
+                  className={`cursor-pointer rounded-[10px] border px-4 py-3 text-sm transition-colors duration-[180ms] ${
+                    ambiente === tipo
+                      ? "border-brand bg-brand-soft font-medium text-foreground shadow-[inset_3px_0_0_var(--accent)]"
+                      : "border-border bg-surface text-muted hover:border-foreground/30 hover:text-foreground"
                   }`}
                 >
                   <input
@@ -176,7 +210,7 @@ export function BriefingForm() {
 
         {etapa === 1 ? (
           <div>
-            <label htmlFor="necessidades" className="font-display text-2xl">
+            <label htmlFor="necessidades" className="font-display text-2xl font-semibold">
               O que precisa acontecer nesse espaço?
             </label>
             <p className="mt-2 text-sm text-muted">
@@ -216,7 +250,7 @@ export function BriefingForm() {
               </label>
 
               {aviso ? (
-                <p role="alert" className="mt-3 rounded-lg border border-danger/30 bg-danger-soft px-3 py-2 text-sm text-danger">
+                <p role="alert" className="mt-3 rounded-[10px] border border-danger/30 bg-danger-soft px-3 py-2 text-sm text-danger">
                   {aviso}
                 </p>
               ) : null}
@@ -224,7 +258,7 @@ export function BriefingForm() {
               {anexos.length > 0 ? (
                 <ul className="mt-4 grid gap-2">
                   {anexos.map((anexo) => (
-                    <li key={anexo.id} className="rounded-lg border border-border bg-surface px-3 py-2.5 text-sm">
+                    <li key={anexo.id} className="rounded-[10px] border border-border bg-surface px-3 py-2.5 text-sm">
                       <div className="flex items-center justify-between gap-3">
                         <span className="truncate">{anexo.nome}</span>
                         <span className="shrink-0 text-xs text-muted tabular-nums">{tamanhoLegivel(anexo.tamanho)}</span>
@@ -247,7 +281,7 @@ export function BriefingForm() {
                             aria-label={`Enviando ${anexo.nome}`}
                             className="h-1.5 overflow-hidden rounded-full bg-surface-muted"
                           >
-                            <div className="h-full bg-brand transition-[width]" style={{ width: `${anexo.progresso}%` }} />
+                            <div className="h-full bg-accent transition-[width] duration-200" style={{ width: `${anexo.progresso}%` }} />
                           </div>
                           <p className="mt-1 text-xs text-muted tabular-nums">Enviando… {anexo.progresso}%</p>
                         </div>
@@ -265,13 +299,15 @@ export function BriefingForm() {
 
         {etapa === 2 ? (
           <fieldset>
-            <legend className="font-display text-2xl">Quando você gostaria de começar?</legend>
+            <legend className="font-display text-2xl font-semibold">Quando você gostaria de começar?</legend>
             <div className="mt-5 grid gap-2 sm:max-w-md">
               {deadlines.map((opcao) => (
                 <label
                   key={opcao}
-                  className={`cursor-pointer rounded-lg border px-4 py-3 text-sm transition-colors ${
-                    prazo === opcao ? "border-brand bg-brand-soft" : "border-border hover:border-foreground/30"
+                  className={`cursor-pointer rounded-[10px] border px-4 py-3 text-sm transition-colors duration-[180ms] ${
+                    prazo === opcao
+                      ? "border-brand bg-brand-soft font-medium text-foreground shadow-[inset_3px_0_0_var(--accent)]"
+                      : "border-border bg-surface text-muted hover:border-foreground/30 hover:text-foreground"
                   }`}
                 >
                   <input
@@ -291,7 +327,7 @@ export function BriefingForm() {
 
         {etapa === 3 ? (
           <div>
-            <h2 className="font-display text-2xl">Como falamos com você?</h2>
+            <h2 className="font-display text-2xl font-semibold">Como falamos com você?</h2>
             <div className="mt-5 grid gap-4 sm:max-w-md">
               <div>
                 <label htmlFor="nome" className={label}>

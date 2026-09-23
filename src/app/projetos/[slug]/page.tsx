@@ -85,7 +85,7 @@ export default async function ProjectPage({ params }: PageProps<"/projetos/[slug
 
       <header className="mt-6 border-b border-border/70 pb-8">
         <p className={eyebrow}>{projeto.category}</p>
-        <h1 className="mt-3 font-display text-4xl tracking-tight sm:text-5xl">{projeto.title}</h1>
+        <h1 className="mt-3 font-display text-[2.5rem] font-medium leading-[1.1] tracking-[-0.01em] sm:text-6xl">{projeto.title}</h1>
         <p className="mt-4 max-w-2xl text-lg leading-relaxed text-muted">{projeto.summary}</p>
       </header>
 
@@ -114,7 +114,7 @@ export default async function ProjectPage({ params }: PageProps<"/projetos/[slug
         {anterior ? (
           <Link href={`/projetos/${anterior.slug}`} className="group max-w-[45%]">
             <span className={eyebrow}>Anterior</span>
-            <span className="mt-1 block font-display text-lg group-hover:text-accent">{anterior.title}</span>
+            <span className="mt-1 block font-display text-lg font-semibold transition-colors group-hover:text-accent">{anterior.title}</span>
           </Link>
         ) : (
           <span />
@@ -122,7 +122,7 @@ export default async function ProjectPage({ params }: PageProps<"/projetos/[slug
         {proximo ? (
           <Link href={`/projetos/${proximo.slug}`} className="group max-w-[45%] text-right">
             <span className={eyebrow}>Próximo</span>
-            <span className="mt-1 block font-display text-lg group-hover:text-accent">{proximo.title}</span>
+            <span className="mt-1 block font-display text-lg font-semibold transition-colors group-hover:text-accent">{proximo.title}</span>
           </Link>
         ) : null}
       </nav>
